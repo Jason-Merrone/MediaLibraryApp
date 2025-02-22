@@ -5,7 +5,7 @@ data class MoviePage (
     val title: String,
     val genre:String,
     val rating:String,
-    val runtime:String,
+    val runtime:Int,
     val format:String,
     val notes:String
 )

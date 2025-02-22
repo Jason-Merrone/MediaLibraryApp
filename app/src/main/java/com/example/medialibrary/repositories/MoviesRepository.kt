@@ -11,7 +11,7 @@ object MoviesRepository {
 
     fun addPage(
         title: String,
-        runtime: String,
+        runtime: Int,
         genre: String,
         rating: String,
         format: String,
@@ -32,7 +32,7 @@ object MoviesRepository {
     fun updatePage(
         id:Int,
         title: String,
-        runtime: String,
+        runtime: Int,
         genre: String,
         rating: String,
         format: String,

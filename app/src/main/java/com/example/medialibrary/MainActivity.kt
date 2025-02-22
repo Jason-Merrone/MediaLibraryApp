@@ -27,6 +27,18 @@ import com.example.medialibrary.ui.theme.MediaLibraryTheme
 import com.example.medialibrary.viewmodels.boardgameviewmodels.BoardGamesScreenViewModel
 import com.example.medialibrary.ui.screens.boardgamescreens.BoardGameModificationScreen
 import com.example.medialibrary.ui.screens.boardgamescreens.BoardGameScreen
+import com.example.medialibrary.ui.screens.bookscreens.BookModificationScreen
+import com.example.medialibrary.ui.screens.bookscreens.BookScreen
+import com.example.medialibrary.ui.screens.bookscreens.BooksScreen
+import com.example.medialibrary.ui.screens.moviescreens.MovieModificationScreen
+import com.example.medialibrary.ui.screens.moviescreens.MovieScreen
+import com.example.medialibrary.ui.screens.moviescreens.MoviesScreen
+import com.example.medialibrary.ui.screens.videogamescreens.VideoGameModificationScreen
+import com.example.medialibrary.ui.screens.videogamescreens.VideoGameScreen
+import com.example.medialibrary.ui.screens.videogamescreens.VideoGamesScreen
+import com.example.medialibrary.viewmodels.bookviewmodels.BooksScreenViewModel
+import com.example.medialibrary.viewmodels.movieviewmodels.MoviesScreenViewModel
+import com.example.medialibrary.viewmodels.videogameviewmodels.VideoGamesScreenViewModel
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("StateFlowValueCalledInComposition")
@@ -37,6 +49,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             val navController = rememberNavController()
             val boardGamesViewModel by viewModels<BoardGamesScreenViewModel>()
+            val booksViewModel by viewModels<BooksScreenViewModel>()
+            val moviesViewModel by viewModels<MoviesScreenViewModel>()
+            val videoGamesViewModel by viewModels<VideoGamesScreenViewModel>()
 
             MediaLibraryTheme {
                 Box(
@@ -62,42 +77,80 @@ class MainActivity : ComponentActivity() {
                                 Button(onClick = {
                                     navController.navigate(Destinations.VideoGamesScreen())
                                 }) {
-                                    Text("Video Games")
+                                    Text("Video Games (" + videoGamesViewModel.videoGames.value.size+")")
                                 }
                                 Button(onClick = {
                                     navController.navigate(Destinations.MoviesScreen())
                                 }) {
-                                    Text("Movies")
+                                    Text("Movies (" + moviesViewModel.movies.value.size+")")
                                 }
                                 Button(onClick = {
                                     navController.navigate(Destinations.BoardGamesScreen())
                                 }) {
-                                    Text("Board Games " + boardGamesViewModel.boardGames.value.size)
+                                    Text("Board Games (" + boardGamesViewModel.boardGames.value.size+")")
                                 }
                                 Button(onClick = {
                                     navController.navigate(Destinations.BooksScreen())
                                 }) {
-                                    Text("Books")
+                                    Text("Books (" + booksViewModel.books.value.size+")")
                                 }
                             }
                         }
 
                         // Video Game Screens
                         composable<Destinations.VideoGamesScreen> {
-                            Button(onClick = {
-                                navController.popBackStack()
-                            }) {
-                                Text("Go back to page 1")
-                            }
+                            VideoGamesScreen(
+                                gotToVideoGameModification = {
+                                    navController.navigate(Destinations.VideoGameModificationScreen())
+                                },
+                                goToVideoGame = { id ->
+                                    navController.navigate(Destinations.VideoGameScreen.createRoute(id))
+                                },
+                                viewModel = videoGamesViewModel
+                            )
+                        }
+                        composable(Destinations.VideoGameScreen.route) { backStackEntry ->
+                            val id = backStackEntry.arguments?.getString("id")?.toIntOrNull() ?: -1
+                            VideoGameScreen(
+                                viewModel = VideoGamesScreenViewModel(),
+                                id = id
+                            )
+                        }
+                        dialog<Destinations.VideoGameModificationScreen> {
+                            VideoGameModificationScreen(
+                                id = null,
+                                goBack = {
+                                    navController.popBackStack()
+                                }
+                            )
                         }
 
                         // Movie Screens
                         composable<Destinations.MoviesScreen> {
-                            Button(onClick = {
-                                navController.popBackStack()
-                            }) {
-                                Text("Go back to page 1")
-                            }
+                            MoviesScreen(
+                                gotToMovieModification = {
+                                    navController.navigate(Destinations.MovieModificationScreen())
+                                },
+                                goToMovie = { id ->
+                                    navController.navigate(Destinations.MovieScreen.createRoute(id))
+                                },
+                                viewModel = moviesViewModel
+                            )
+                        }
+                        composable(Destinations.MovieScreen.route) { backStackEntry ->
+                            val id = backStackEntry.arguments?.getString("id")?.toIntOrNull() ?: -1
+                            MovieScreen(
+                                viewModel = MoviesScreenViewModel(),
+                                id = id
+                            )
+                        }
+                        dialog<Destinations.MovieModificationScreen> {
+                            MovieModificationScreen(
+                                id = null,
+                                goBack = {
+                                    navController.popBackStack()
+                                }
+                            )
                         }
 
                         // Board Game Screens
@@ -109,7 +162,7 @@ class MainActivity : ComponentActivity() {
                                 goToBoardGame = { id ->
                                     navController.navigate(Destinations.BoardGameScreen.createRoute(id))
                                 },
-                                viewModel = BoardGamesScreenViewModel()
+                                viewModel = boardGamesViewModel
                             )
                         }
                         composable(Destinations.BoardGameScreen.route) { backStackEntry ->
@@ -131,11 +184,30 @@ class MainActivity : ComponentActivity() {
 
                         // Book Screens
                         composable<Destinations.BooksScreen> {
-                            Button(onClick = {
-                                navController.popBackStack()
-                            }) {
-                                Text("Go back to page 1")
-                            }
+                            BooksScreen(
+                                gotToBookModification = {
+                                    navController.navigate(Destinations.BookModificationScreen())
+                                },
+                                goToBook = { id ->
+                                    navController.navigate(Destinations.BookScreen.createRoute(id))
+                                },
+                                viewModel = booksViewModel
+                            )
+                        }
+                        composable(Destinations.BookScreen.route) { backStackEntry ->
+                            val id = backStackEntry.arguments?.getString("id")?.toIntOrNull() ?: -1
+                            BookScreen(
+                                viewModel = BooksScreenViewModel(),
+                                id = id
+                            )
+                        }
+                        dialog<Destinations.BookModificationScreen> {
+                            BookModificationScreen(
+                                id = null,
+                                goBack = {
+                                    navController.popBackStack()
+                                }
+                            )
                         }
                     }
                 }
